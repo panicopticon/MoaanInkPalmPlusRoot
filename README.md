@@ -15,6 +15,8 @@ I was unable to locate a root technique for this device, however my ability to s
 ## Overview
 As detailed in the PineNote documentation, as well as a variety of other places, the RockChip loader used by these devices either has a bug or an intentional limit that prevents RockChip's loader from reading data past the first 32MB (`0x2000000`) of flash. Bytes past this limit are replaced by `0xCC`. This is a problem as the `boot_a` and `boot_b` partitions both sit beyond that boundary. Once we have a copy of those partitions rooting using [Magisk](https://github.com/topjohnwu/Magisk) is straight forward. When unable to extract the boot partition using `fastboot` or other manufacturer tools, the fallback is to extract the image from a full update file (differential updates may not work), unfortunately as at the time of writing no updates were available or able to be located.
 
+It is possible that this could be accomplished using `fastboot` rather than one of the bootloader tools; applying an already existing root this way is likely possible, however reading out the `uboot` and `boot` images this way is doesn't appear to be feasible. Additionaly, `fastbootd` reports `secure boot - yes` this appears to be a lie as changing paritions that should result in a secure boot failure or dm-verity failure ... well, dont, if they did this approach wouldn't work.
+
 ## Requirements
 This was done on a modern Linux, if that's not what you're using, good luck.
 - [rkdeveloptool](https://github.com/rockchip-linux/rkdeveloptool) to read and write the partitions from `loader` mode
