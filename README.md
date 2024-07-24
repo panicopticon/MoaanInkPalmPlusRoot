@@ -1,5 +1,6 @@
 # Moaan (Moan) inkPalm Plus
 The Moaan inkPalm Plus (墨案迷你阅 Plus) is a  phone sized Android 11 eInk tablet. Hardware wise it is quite similar to the [PineNote](https://wiki.pine64.org/wiki/PineNote) but has a smaller screen, less ram and less ROM. The fact that this is the same platform as the PineNote is excellent, as they're already done most of the work and we have an extensive base to work from. 
+
 ## Device Specs
 - Rockchip RK3566 (4x ARM Cortex-A55 1.8GHz)
 - 2 GB of RAM
@@ -10,19 +11,23 @@ The Moaan inkPalm Plus (墨案迷你阅 Plus) is a  phone sized Android 11 eInk 
 
 # Root Technique
 I was unable to locate a root technique for this device, however my ability to search in Chinese is limited to what Google Translate is able to assist with so its probable I missed something. After some playing around I was able to more or less directly adapt the [PineNote u-Boot Fix/Root](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot) approach.
+
 ## Overview
 As detailed in the PineNote documentation, as well as a variety of other places, the RockChip loader used by these devices either has a bug or an intentional limit that prevents RockChip's loader from reading data past the first 32MB (`0x2000000`) of flash. Bytes past this limit are replaced by `0xCC`. This is a problem as the `boot_a` and `boot_b` partitions both sit beyond that boundary. Once we have a copy of those partitions rooting using [Magisk](https://github.com/topjohnwu/Magisk) is straight forward. When unable to extract the boot partition using `fastboot` or other manufacturer tools, the fallback is to extract the image from a full update file (differential updates may not work), unfortunately as at the time of writing no updates were available or able to be located.
+
 ## Requirements
 This was done on a modern Linux, if that's not what you're using, good luck.
 - [rkdeveloptool](https://github.com/rockchip-linux/rkdeveloptool) to read and write the partitions from `loader` mode
 -- Other RockChip loader utilities may work, but  are untested
 - [adb (Android Debug Bridge)](https://developer.android.com/tools/adb), binary copies can be downloaded [here](https://developer.android.com/tools/releases/platform-tools)
 - Device in `loader` mode
+
 ### Entering loader Mode
 `loader` mode can be accessed by doing one of the following 
 - From Android `adb reboot loader`
 - From Android `adb reboot fastboot` select `bootloader` from interactive menu
 - Maybe some magic button presses at power on? I didn't have any luck with this
+
 ### Exiting loader Mode
 - `rkdeveloptool reboot`
 - Hold the power button for ~20 seconds, the backlight should turn off, release the power button, hold the power button until the screen refreshes, the device should now boot normally
@@ -53,8 +58,12 @@ This was done on a modern Linux, if that's not what you're using, good luck.
 20             12634112          122142655   56068374528       userdata
 ```
  As you can see, we will be unable to correctly dump data beyond `dtb_a`, the last partition below the 32MB boundary, data beyond the 32M boundary is replaced with `0xCC` bytes. 
+
 ## Prepatched images for rooting
 If you don't implicitly trust randos on the internet or want to know how this was done, see the Manual Approach section below. The provided rooted  `boot` image was created using `Magisk-v27.0.apk`.
+
+Download the images from the release section, run the steps below by hand, or use `patch_and_root.sh` to execute the steps automatically.
+
  - Enter `loader` mode as described above
  - Read `boot_a` by running `rkdeveloptool read-partition uboot_a uboot_a.img`
  - Read `boot_b` by running`rkdeveloptool read-partition uboot_b uboot_b.img`
@@ -108,8 +117,9 @@ Assuming that all worked, you may wish to also replace the `uboot-b` partition.
 
 Assuming that all worked, you may wish to also replace the `uboot-b` partition.
  
- ### uboot patch details
-Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74`in the Python processed output.
+### uboot patch details
+Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74`in the `uboot.bin` extracted using `moaan_uboot_img.py`. This patching is automated can be done automatically using `moaan_uboot_patcher.py`.
+
 Original:
  ```
  04 18 40 B9  F3 0B 00 F9  81 00 01 8B  24 00 02 8B
@@ -138,9 +148,11 @@ ulong FUN_00012b58(long param_1,long param_2,ulong param_3,undefined8 param_4)
 }
 ```
 You can then right click on the `b.ls` instruction and select `Patch Instruction` and change it to a `b`, then copy new opcode out. I suspect that this set of techniques will generalize to a bunch of different Rockchip `uboot`s as discussion on various [threads](https://xdaforums.com/t/tool-rkdumper-utility-for-backup-firmware-of-rockchips-devices.2915363/) show folks having this exact issue.
+
 # If things go wrong
 - Hopefully you made a backup, you should be able to restore the images you messed up
 - If you didn't there will be a copy of the dumps on archive.org, if its not there yet, poke me
+
 # Box Copy
 To aid people in finding this information
 | Chinese  | English |
