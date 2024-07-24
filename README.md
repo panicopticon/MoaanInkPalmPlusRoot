@@ -118,7 +118,7 @@ Assuming that all worked, you may wish to also replace the `uboot-b` partition.
 Assuming that all worked, you may wish to also replace the `uboot-b` partition.
  
 ### uboot patch details
-Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74`in the `uboot.bin` extracted using `moaan_uboot_img.py`. This patching is automated can be done automatically using `moaan_uboot_patcher.py`.
+Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74`in the `uboot.bin` extracted from the `boot_{a|b}` image using `moaan_uboot_img.py`. This patching is automated can be done automatically using `moaan_uboot_patcher.py`.
 
 Original:
  ```
