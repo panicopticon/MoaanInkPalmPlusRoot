@@ -19,7 +19,7 @@ It is possible that this could be accomplished using `fastboot` rather than one 
 
 ## Requirements
 This was done on a modern Linux, if that's not what you're using, good luck.
-- [rkdeveloptool](https://github.com/rockchip-linux/rkdeveloptool) to read and write the partitions from `loader` mode
+- [rkdeveloptool](https://gitlab.com/pine64-org/quartz-bsp/rkdeveloptool) to read and write the partitions from `loader` mode
 -- Other RockChip loader utilities may work, but  are untested
 - [adb (Android Debug Bridge)](https://developer.android.com/tools/adb), binary copies can be downloaded [here](https://developer.android.com/tools/releases/platform-tools)
 - Device in `loader` mode
@@ -28,8 +28,8 @@ This was done on a modern Linux, if that's not what you're using, good luck.
 `loader` mode can be accessed by doing one of the following 
 - From Android `adb reboot loader`
 - From Android `adb reboot fastboot` select `bootloader` from interactive menu
-- Maybe some magic button presses at power on? I didn't have any luck with this
-
+- Button mashing. Power device off. Disconnect USB. Hold volume down. Press power button. Device should appear in `rkloader` mode. Note that disconnecting in this mode will swap it to `maskrom` mode. This is a extremely fidly? It only seems to work after first configuration is done?
+ 
 ### Exiting loader Mode
 - `rkdeveloptool reboot`
 - Hold the power button for ~20 seconds, the backlight should turn off, release the power button, hold the power button until the screen refreshes, the device should now boot normally
@@ -120,7 +120,7 @@ Assuming that all worked, you may wish to also replace the `uboot-b` partition.
 Assuming that all worked, you may wish to also replace the `uboot-b` partition.
  
 ### uboot patch details
-Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74`in the `uboot.bin` extracted from the `boot_{a|b}` image using `moaan_uboot_img.py`. This patching is automated can be done automatically using `moaan_uboot_patcher.py`.
+Based on the work detailed [here](https://github.com/DorianRudolph/pinenotes/blob/main/README.md#fix-uboot), we will do the same patch in a different location, this changes a `b.ls` (`49 01 00 54`) into a `b` (`0A 00 00 14`) for this device that's at offset `0x12B74` (this offset is the same in `V07`, `V08` and `V09`, so maybe it won't change; should update the patcher to continue if this is the offset?) in the `uboot.bin` extracted from the `boot_{a|b}` image using `moaan_uboot_img.py`. This patching is automated can be done automatically using `moaan_uboot_patcher.py`.
 
 Original:
  ```
@@ -153,7 +153,13 @@ You can then right click on the `b.ls` instruction and select `Patch Instruction
 
 # If things go wrong
 - Hopefully you made a backup, you should be able to restore the images you messed up
-- If you didn't there will be a copy of the dumps on archive.org, if its not there yet, poke me
+- Backups and archives can be found at [archive.org](https://archive.org/details/moaan_inkpalm_plus) or [Google Drive](https://drive.google.com/drive/folders/15rm_Af2WNJBSymEbj58VLp_EypiOZpRT?usp=sharing).
+
+# Updates
+Two OTA updates have been delivered (v08, v09) from the out of box version (v07) I got. The update zips can be found at the archive.org link above. These updates appear to be full system images (applied to the A/B side only) rather than incrementals. The can be unpacked using [this](https://github.com/ssut/payload-dumper-go). The results of this unpack are somewhat different to the dumps from `rkdevelop`, those dumps combine several of the images (`system`, `odm`, etc) into the  `super` partition. The device will recognize and attempt to flash `update.zip` files contained in the `/sdcard` folder, though when I attempted this approach instead of the OTA update the device bootlooped. This was recoverable using the button mash `loader` entry method above.
+
+# Other
+- The Sogou keyboard is certainly spying on you, install and use litterally anything else.
 
 # Box Copy
 To aid people in finding this information
