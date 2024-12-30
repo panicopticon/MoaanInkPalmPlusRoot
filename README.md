@@ -62,7 +62,7 @@ This was done on a modern Linux, if that's not what you're using, good luck.
  As you can see, we will be unable to correctly dump data beyond `dtb_a`, the last partition below the 32MB boundary, data beyond the 32M boundary is replaced with `0xCC` bytes. 
 
 ## Prepatched images for rooting
-If you don't implicitly trust randos on the internet or want to know how this was done, see the Manual Approach section below. The provided rooted  `boot` image was created using `Magisk-v27.0.apk`.
+If you don't implicitly trust randos on the internet or want to know how this was done, see the Manual Approach section below, updated images for v08 and v09 can be found in the Archive and Google Drive links below. The provided rooted  `boot` image was created using `Magisk-v27.0.apk`.
 
 Download the images from the release section, run the steps below by hand, or use `patch_and_root.sh` to execute the steps automatically.
 
