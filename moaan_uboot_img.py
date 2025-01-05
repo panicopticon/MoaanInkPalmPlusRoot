@@ -1,11 +1,19 @@
-#!/usr/bin/python
+#!/usr/bin/env -S uv run
+
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "fdt",
+# ]
+# ///
 
 # minimal hack'n'slash of https://github.com/DorianRudolph/pinenotes/blob/main/py/uboot_img.py
 # by panicopticon 20240721
 
-import fdt
 from hashlib import sha256
 from sys import argv
+
+import fdt
 
 SZ = 0x200000
 
@@ -91,4 +99,5 @@ if __name__ == '__main__':
         patch( argv[2], argv[3], argv[4] )
     else:
         help()
+
 

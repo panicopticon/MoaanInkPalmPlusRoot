@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # quick'n'dirty Rockchip RK3566 uboot patcher to deal with rk uboot 32M i
 # security/bug that gives you all 0xCCs
