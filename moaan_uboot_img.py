@@ -118,7 +118,7 @@ if __name__ == "__main__":
     elif sys.argv[1] == "p":
         bin_path = Path(sys.argv[3])
         if not bin_path.exists():
-            print(f".bin File not found: {img_path}")
+            print(f".bin File not found: {bin_path}")
             sys.exit(1)
 
         patch(img_path, bin_path, Path(sys.argv[4]))
